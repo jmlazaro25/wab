@@ -1,4 +1,1 @@
-__all__ = ['ROOTmanager',
-           'physTools',
-           'mipTracking'
-           ]
+__all__ = [ 'ROOTmanager', 'physTools', 'mipTracking' ]
