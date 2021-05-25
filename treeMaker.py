@@ -4,88 +4,243 @@ import ROOT as r
 import numpy as np
 from mods import ROOTmanager as manager
 from mods import physTools, mipTracking
+
 cellMap = np.loadtxt('mods/cellmodule.txt')
 
 r.gSystem.Load('/home/jmlazaro/research/ldmx-sw/install/lib/libFramework.so')
 
 # TreeModel to build here
 branches_info = {
-        # Base variables
-        'nReadoutHits':              {'rtype': int,   'default': 0 },
-        'summedDet':                 {'rtype': float, 'default': 0.},
-        'summedTightIso':            {'rtype': float, 'default': 0.},
-        'maxCellDep':                {'rtype': float, 'default': 0.},
-        'showerRMS':                 {'rtype': float, 'default': 0.},
-        'xStd':                      {'rtype': float, 'default': 0.},
-        'yStd':                      {'rtype': float, 'default': 0.},
-        'avgLayerHit':               {'rtype': float, 'default': 0.},
-        'stdLayerHit':               {'rtype': float, 'default': 0.},
-        'deepestLayerHit':           {'rtype': int,   'default': 0 },
-        'ecalBackEnergy':            {'rtype': float, 'default': 0.},
-        # MIP tracking variables
-        'straight4':                 {'rtype': int,   'default': 0 },
-        'firstNearPhLayer':          {'rtype': int,   'default': 33},
-        'nNearPhHits':               {'rtype': int,   'default': 0 },
-        'fullElectronTerritoryHits': {'rtype': int,   'default': 0 },
-        'fullPhotonTerritoryHits':   {'rtype': int,   'default': 0 },
-        'fullTerritoryRatio':        {'rtype': float, 'default': 1.},
-        'electronTerritoryHits':     {'rtype': int,   'default': 0 },
-        'photonTerritoryHits':       {'rtype': int,   'default': 0 },
-        'TerritoryRatio':            {'rtype': float, 'default': 1.},
-        'epSep':                     {'rtype': float, 'default': 0.},
-        'epDot':                     {'rtype': float, 'default': 0.},
-        # HcalVeto
-        'maxPE':                     {'rtype': int,   'default':0.5},
-        # Extra Momentum and Thetale Info for analysis only (not trained on)
-        'recoilPT':                  {'rtype': float, 'default': 0.},
-        'eTheta':                    {'rtype': float, 'default': 0.},
-        'gTheta':                    {'rtype': float, 'default': 0.},
-        'egTheta':                   {'rtype': float, 'default': 0.}
-        }
+    # Base variables
+    'nReadoutHits': {
+        'rtype': int,
+        'default': 0
+    },
+    'summedDet': {
+        'rtype': float,
+        'default': 0.
+    },
+    'summedTightIso': {
+        'rtype': float,
+        'default': 0.
+    },
+    'maxCellDep': {
+        'rtype': float,
+        'default': 0.
+    },
+    'showerRMS': {
+        'rtype': float,
+        'default': 0.
+    },
+    'xStd': {
+        'rtype': float,
+        'default': 0.
+    },
+    'yStd': {
+        'rtype': float,
+        'default': 0.
+    },
+    'avgLayerHit': {
+        'rtype': float,
+        'default': 0.
+    },
+    'stdLayerHit': {
+        'rtype': float,
+        'default': 0.
+    },
+    'deepestLayerHit': {
+        'rtype': int,
+        'default': 0
+    },
+    'ecalBackEnergy': {
+        'rtype': float,
+        'default': 0.
+    },
+    # MIP tracking variables
+    'straight4': {
+        'rtype': int,
+        'default': 0
+    },
+    'firstNearPhLayer': {
+        'rtype': int,
+        'default': 33
+    },
+    'nNearPhHits': {
+        'rtype': int,
+        'default': 0
+    },
+    'fullElectronTerritoryHits': {
+        'rtype': int,
+        'default': 0
+    },
+    'fullPhotonTerritoryHits': {
+        'rtype': int,
+        'default': 0
+    },
+    'fullTerritoryRatio': {
+        'rtype': float,
+        'default': 1.
+    },
+    'electronTerritoryHits': {
+        'rtype': int,
+        'default': 0
+    },
+    'photonTerritoryHits': {
+        'rtype': int,
+        'default': 0
+    },
+    'TerritoryRatio': {
+        'rtype': float,
+        'default': 1.
+    },
+    'epSep': {
+        'rtype': float,
+        'default': 0.
+    },
+    'epDot': {
+        'rtype': float,
+        'default': 0.
+    },
+    # HcalVeto
+    'maxPE': {
+        'rtype': int,
+        'default': 0.5
+    },
+    # Extra Momentum and Thetale Info for analysis only (not trained on)
+    'recoilPT': {
+        'rtype': float,
+        'default': 0.
+    },
+    'eTheta': {
+        'rtype': float,
+        'default': 0.
+    },
+    'gTheta': {
+        'rtype': float,
+        'default': 0.
+    },
+    'egTheta': {
+        'rtype': float,
+        'default': 0.
+    }
+}
 
 for i in range(1, physTools.nSegments + 1):
 
     # Longitudinal segment variables
-    branches_info['energy_s{}'.format(i)]          = {'rtype': float, 'default': 0.}
-    branches_info['nHits_s{}'.format(i)]           = {'rtype': int,   'default': 0 }
-    branches_info['xMean_s{}'.format(i)]           = {'rtype': float, 'default': 0.}
-    branches_info['yMean_s{}'.format(i)]           = {'rtype': float, 'default': 0.}
-    branches_info['layerMean_s{}'.format(i)]       = {'rtype': float, 'default': 0.}
-    branches_info['xStd_s{}'.format(i)]            = {'rtype': float, 'default': 0.}
-    branches_info['yStd_s{}'.format(i)]            = {'rtype': float, 'default': 0.}
-    branches_info['layerStd_s{}'.format(i)]        = {'rtype': float, 'default': 0.}
+    branches_info['energy_s{}'.format(i)] = {'rtype': float, 'default': 0.}
+    branches_info['nHits_s{}'.format(i)] = {'rtype': int, 'default': 0}
+    branches_info['xMean_s{}'.format(i)] = {'rtype': float, 'default': 0.}
+    branches_info['yMean_s{}'.format(i)] = {'rtype': float, 'default': 0.}
+    branches_info['layerMean_s{}'.format(i)] = {'rtype': float, 'default': 0.}
+    branches_info['xStd_s{}'.format(i)] = {'rtype': float, 'default': 0.}
+    branches_info['yStd_s{}'.format(i)] = {'rtype': float, 'default': 0.}
+    branches_info['layerStd_s{}'.format(i)] = {'rtype': float, 'default': 0.}
 
     for j in range(1, physTools.nRegions + 1):
 
         # Electron RoC variables
-        branches_info['eContEnergy_x{}_s{}'.format(j,i)]    = {'rtype': float, 'default': 0.}
-        branches_info['eContNHits_x{}_s{}'.format(j,i)]     = {'rtype': int,   'default': 0 }
-        branches_info['eContXMean_x{}_s{}'.format(j,i)]     = {'rtype': float, 'default': 0.}
-        branches_info['eContYMean_x{}_s{}'.format(j,i)]     = {'rtype': float, 'default': 0.}
-        branches_info['eContLayerMean_x{}_s{}'.format(j,i)] = {'rtype': float, 'default': 0.}
-        branches_info['eContXStd_x{}_s{}'.format(j,i)]      = {'rtype': float, 'default': 0.}
-        branches_info['eContYStd_x{}_s{}'.format(j,i)]      = {'rtype': float, 'default': 0.}
-        branches_info['eContLayerStd_x{}_s{}'.format(j,i)]  = {'rtype': float, 'default': 0.}
+        branches_info['eContEnergy_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['eContNHits_x{}_s{}'.format(j, i)] = {
+            'rtype': int,
+            'default': 0
+        }
+        branches_info['eContXMean_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['eContYMean_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['eContLayerMean_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['eContXStd_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['eContYStd_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['eContLayerStd_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
 
         # Photon RoC variables
-        branches_info['gContEnergy_x{}_s{}'.format(j,i)]    = {'rtype': float, 'default': 0.}
-        branches_info['gContNHits_x{}_s{}'.format(j,i)]     = {'rtype': int,   'default': 0 }
-        branches_info['gContXMean_x{}_s{}'.format(j,i)]     = {'rtype': float, 'default': 0.}
-        branches_info['gContYMean_x{}_s{}'.format(j,i)]     = {'rtype': float, 'default': 0.}
-        branches_info['gContLayerMean_x{}_s{}'.format(j,i)] = {'rtype': float, 'default': 0.}
-        branches_info['gContXStd_x{}_s{}'.format(j,i)]      = {'rtype': float, 'default': 0.}
-        branches_info['gContYStd_x{}_s{}'.format(j,i)]      = {'rtype': float, 'default': 0.}
-        branches_info['gContLayerStd_x{}_s{}'.format(j,i)]  = {'rtype': float, 'default': 0.}
+        branches_info['gContEnergy_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['gContNHits_x{}_s{}'.format(j, i)] = {
+            'rtype': int,
+            'default': 0
+        }
+        branches_info['gContXMean_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['gContYMean_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['gContLayerMean_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['gContXStd_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['gContYStd_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['gContLayerStd_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
 
         # Outside RoC variables
-        branches_info['oContEnergy_x{}_s{}'.format(j,i)]    = {'rtype': float, 'default': 0.}
-        branches_info['oContNHits_x{}_s{}'.format(j,i)]     = {'rtype': int,   'default': 0 }
-        branches_info['oContXMean_x{}_s{}'.format(j,i)]     = {'rtype': float, 'default': 0.}
-        branches_info['oContYMean_x{}_s{}'.format(j,i)]     = {'rtype': float, 'default': 0.}
-        branches_info['oContLayerMean_x{}_s{}'.format(j,i)] = {'rtype': float, 'default': 0.}
-        branches_info['oContXStd_x{}_s{}'.format(j,i)]      = {'rtype': float, 'default': 0.}
-        branches_info['oContYStd_x{}_s{}'.format(j,i)]      = {'rtype': float, 'default': 0.}
-        branches_info['oContLayerStd_x{}_s{}'.format(j,i)]  = {'rtype': float, 'default': 0.}
+        branches_info['oContEnergy_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['oContNHits_x{}_s{}'.format(j, i)] = {
+            'rtype': int,
+            'default': 0
+        }
+        branches_info['oContXMean_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['oContYMean_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['oContLayerMean_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['oContXStd_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['oContYStd_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+        branches_info['oContLayerStd_x{}_s{}'.format(j, i)] = {
+            'rtype': float,
+            'default': 0.
+        }
+
 
 def main():
 
@@ -101,9 +256,13 @@ def main():
 
     # Construct tree processes
     procs = []
-    for gl, group in zip(group_labels,inlist):
-        procs.append( manager.TreeProcess(event_process, group,
-                                          ID=gl, batch=batch_mode, pfreq=100) )
+    for gl, group in zip(group_labels, inlist):
+        procs.append(
+            manager.TreeProcess(event_process,
+                                group,
+                                ID=gl,
+                                batch=batch_mode,
+                                pfreq=100))
 
     # Process jobs
     for proc in procs:
@@ -112,14 +271,16 @@ def main():
         os.chdir(proc.tmp_dir)
 
         # Branches needed
-        proc.ecalVeto     = proc.addBranch('EcalVetoResult', 'EcalVeto_v12')
-        proc.hcalVeto     = proc.addBranch('HcalVetoResult', 'HcalVeto_v12')
-        proc.targetSPHits = proc.addBranch('SimTrackerHit', 'TargetScoringPlaneHits_v12')
-        proc.ecalSPHits   = proc.addBranch('SimTrackerHit', 'EcalScoringPlaneHits_v12')
-        proc.ecalRecHits  = proc.addBranch('EcalHit', 'EcalRecHits_v12')
+        proc.ecalVeto = proc.addBranch('EcalVetoResult', 'EcalVeto_v12')
+        proc.hcalVeto = proc.addBranch('HcalVetoResult', 'HcalVeto_v12')
+        proc.targetSPHits = proc.addBranch('SimTrackerHit',
+                                           'TargetScoringPlaneHits_v12')
+        proc.ecalSPHits = proc.addBranch('SimTrackerHit',
+                                         'EcalScoringPlaneHits_v12')
+        proc.ecalRecHits = proc.addBranch('EcalHit', 'EcalRecHits_v12')
 
         # Tree/Files(s) to make
-        print('\nRunning %s'%(proc.ID))
+        print('\nRunning %s' % (proc.ID))
 
         proc.separate = separate
 
@@ -130,7 +291,7 @@ def main():
                 'ein': None,
                 'gin': None,
                 'none': None
-                }
+            }
 
         for tfMaker in proc.tfMakers:
             proc.tfMakers[tfMaker] = manager.TreeMaker(group_labels[procs.index(proc)]+\
@@ -141,13 +302,13 @@ def main():
                                         )
 
         # Gets executed at the end of run()
-        proc.extrafs = [ proc.tfMakers[tfMaker].wq for tfMaker in proc.tfMakers ]
+        proc.extrafs = [proc.tfMakers[tfMaker].wq for tfMaker in proc.tfMakers]
 
         # RUN
         proc.run(maxEvents=maxEvent)
 
     # Remove scratch directory if there is one
-    if not batch_mode:     # Don't want to break other batch jobs when one finishes
+    if not batch_mode:  # Don't want to break other batch jobs when one finishes
         manager.rmScratch()
 
     print('\nDone!\n')
@@ -160,19 +321,19 @@ def event_process(self):
     feats = next(iter(self.tfMakers.values())).resetFeats()
 
     # Assign pre-computed variables
-    feats['nReadoutHits']       = self.ecalVeto.getNReadoutHits()
-    feats['summedDet']          = self.ecalVeto.getSummedDet()
-    feats['summedTightIso']     = self.ecalVeto.getSummedTightIso()
-    feats['maxCellDep']         = self.ecalVeto.getMaxCellDep()
-    feats['showerRMS']          = self.ecalVeto.getShowerRMS()
-    feats['xStd']               = self.ecalVeto.getXStd()
-    feats['yStd']               = self.ecalVeto.getYStd()
-    feats['avgLayerHit']        = self.ecalVeto.getAvgLayerHit()
-    feats['stdLayerHit']        = self.ecalVeto.getStdLayerHit()
-    feats['deepestLayerHit']    = self.ecalVeto.getDeepestLayerHit() 
-    feats['ecalBackEnergy']     = self.ecalVeto.getEcalBackEnergy()
-    feats['maxPE']              = self.hcalVeto.getMaxPEHit().getPE()
-    
+    feats['nReadoutHits'] = self.ecalVeto.getNReadoutHits()
+    feats['summedDet'] = self.ecalVeto.getSummedDet()
+    feats['summedTightIso'] = self.ecalVeto.getSummedTightIso()
+    feats['maxCellDep'] = self.ecalVeto.getMaxCellDep()
+    feats['showerRMS'] = self.ecalVeto.getShowerRMS()
+    feats['xStd'] = self.ecalVeto.getXStd()
+    feats['yStd'] = self.ecalVeto.getYStd()
+    feats['avgLayerHit'] = self.ecalVeto.getAvgLayerHit()
+    feats['stdLayerHit'] = self.ecalVeto.getStdLayerHit()
+    feats['deepestLayerHit'] = self.ecalVeto.getDeepestLayerHit()
+    feats['ecalBackEnergy'] = self.ecalVeto.getEcalBackEnergy()
+    feats['maxPE'] = self.hcalVeto.getMaxPEHit().getPE()
+
     ###################################
     # Determine event type
     ###################################
@@ -181,7 +342,7 @@ def event_process(self):
     e_ecalHit = physTools.electronEcalSPHit(self.ecalSPHits)
     if e_ecalHit != None:
         e_ecalPos, e_ecalP = e_ecalHit.getPosition(), e_ecalHit.getMomentum()
-        
+
         # Extra analysis info
         feats['recoilPT'] = physTools.mag(e_ecalP)
 
@@ -189,12 +350,14 @@ def event_process(self):
     e_targetHit = physTools.electronTargetSPHit(self.targetSPHits)
     if e_targetHit != None:
         g_targPos, g_targP = physTools.gammaTargetInfo(e_targetHit)
-        
+
         # Extra analysis info
-        feats['eTheta'] = physTools.angle(e_targetHit.getMomentum(), units='degrees')
+        feats['eTheta'] = physTools.angle(e_targetHit.getMomentum(),
+                                          units='degrees')
         feats['gTheta'] = physTools.angle(g_targP, units='degrees')
-        feats['egTheta'] = physTools.angle(g_targP, units='degrees',
-                                                            vec2=e_targetHit.getMomentum() )
+        feats['egTheta'] = physTools.angle(g_targP,
+                                           units='degrees',
+                                           vec2=e_targetHit.getMomentum())
 
     else:  # Should about never happen -> division by 0 in g_traj
         print('no e at targ!')
@@ -209,14 +372,16 @@ def event_process(self):
         if e_ecalHit != None:
             e_traj = physTools.layerIntercepts(e_ecalPos, e_ecalP)
             for cell in cellMap:
-                if physTools.dist( cell[1:], e_traj[0] ) <= physTools.cell_radius:
+                if physTools.dist(cell[1:],
+                                  e_traj[0]) <= physTools.cell_radius:
                     e_fid = True
                     break
 
         if e_targetHit != None:
             g_traj = physTools.layerIntercepts(g_targPos, g_targP)
             for cell in cellMap:
-                if physTools.dist( cell[1:], g_traj[0] ) <= physTools.cell_radius:
+                if physTools.dist(cell[1:],
+                                  g_traj[0]) <= physTools.cell_radius:
                     g_fid = True
                     break
 
@@ -228,10 +393,16 @@ def event_process(self):
     if e_traj != None and g_traj != None:
 
         # Create arrays marking start and end of each trajectory
-        e_traj_ends = [np.array([e_traj[0][0], e_traj[0][1], physTools.ecal_layerZs[0]    ]),
-                       np.array([e_traj[-1][0], e_traj[-1][1], physTools.ecal_layerZs[-1] ])]
-        g_traj_ends = [np.array([g_traj[0][0], g_traj[0][1], physTools.ecal_layerZs[0]    ]),
-                       np.array([g_traj[-1][0], g_traj[-1][1], physTools.ecal_layerZs[-1] ])]
+        e_traj_ends = [
+            np.array([e_traj[0][0], e_traj[0][1], physTools.ecal_layerZs[0]]),
+            np.array(
+                [e_traj[-1][0], e_traj[-1][1], physTools.ecal_layerZs[-1]])
+        ]
+        g_traj_ends = [
+            np.array([g_traj[0][0], g_traj[0][1], physTools.ecal_layerZs[0]]),
+            np.array(
+                [g_traj[-1][0], g_traj[-1][1], physTools.ecal_layerZs[-1]])
+        ]
 
         # Unused epDot and epSep
         #feats['epSep'] = physTools.dist( e_traj_ends[0], g_traj_ends[0] )
@@ -242,27 +413,31 @@ def event_process(self):
         # Electron trajectory is missing so all hits in Ecal are okay to use
         # Pick trajectories so they won'trestrict tracking, far outside the Ecal
 
-        e_traj_ends   = [np.array([999 ,999 ,0   ]), np.array([999 ,999 ,999 ]) ]
-        g_traj_ends   = [np.array([1000,1000,0   ]), np.array([1000,1000,1000]) ]
+        e_traj_ends = [np.array([999, 999, 0]), np.array([999, 999, 999])]
+        g_traj_ends = [np.array([1000, 1000, 0]), np.array([1000, 1000, 1000])]
 
         #feats['epSep'] = 10.0 + 1.0 # Don't cut on these in this case
         #feats['epDot'] = 3.0 + 1.0
 
     # Territory setup (consider missing case)
-    gToe    = physTools.unit( e_traj_ends[0] - g_traj_ends[0] )
-    origin  = g_traj_ends[0] + 0.5*8.7*gToe
-    e_norm  = physTools.unit( e_traj_ends[1] - e_traj_ends[0] )
-    g_norm  = physTools.unit( g_traj_ends[1] - g_traj_ends[0] )
+    gToe = physTools.unit(e_traj_ends[0] - g_traj_ends[0])
+    origin = g_traj_ends[0] + 0.5 * 8.7 * gToe
+    e_norm = physTools.unit(e_traj_ends[1] - e_traj_ends[0])
+    g_norm = physTools.unit(g_traj_ends[1] - g_traj_ends[0])
 
     # Recoil electron momentum magnitude and angle with z-axis
-    recoilPT  = physTools.mag(  e_ecalP )                 if e_ecalHit != None else -1.0
-    recoilTheta = physTools.angle(e_ecalP, units='radians') if recoilPT > 0    else -1.0
+    recoilPT = physTools.mag(e_ecalP) if e_ecalHit != None else -1.0
+    recoilTheta = physTools.angle(e_ecalP,
+                                  units='radians') if recoilPT > 0 else -1.0
 
     # Set electron RoC binnings
     e_radii = physTools.radius68_thetalt10_plt500
-    if recoilTheta < 10 and recoilPT >= 500: e_radii = physTools.radius68_thetalt10_pgt500
-    elif recoilTheta >= 10 and recoilTheta < 20: e_radii = physTools.radius68_theta10to20
-    elif recoilTheta >= 20: e_radii = physTools.radius68_thetagt20
+    if recoilTheta < 10 and recoilPT >= 500:
+        e_radii = physTools.radius68_thetalt10_pgt500
+    elif recoilTheta >= 10 and recoilTheta < 20:
+        e_radii = physTools.radius68_theta10to20
+    elif recoilTheta >= 20:
+        e_radii = physTools.radius68_thetagt20
 
     # Always use default binning for photon RoC
     g_radii = physTools.radius68_thetalt10_plt500
@@ -272,28 +447,32 @@ def event_process(self):
 
     # Major ECal loop
     for hit in self.ecalRecHits:
-        
+
         if hit.getEnergy() > 0:
 
             layer = physTools.ecal_layer(hit)
-            xy_pair = ( hit.getXPos(), hit.getYPos() )
+            xy_pair = (hit.getXPos(), hit.getYPos())
 
             # Territory selections
             hitPrime = physTools.pos(hit) - origin
-            if np.dot(hitPrime, gToe) > 0: feats['fullElectronTerritoryHits'] += 1
-            else: feats['fullPhotonTerritoryHits'] += 1
+            if np.dot(hitPrime, gToe) > 0:
+                feats['fullElectronTerritoryHits'] += 1
+            else:
+                feats['fullPhotonTerritoryHits'] += 1
 
             # Distance to electron trajectory
             if e_traj != None:
-                xy_e_traj = ( e_traj[layer][0], e_traj[layer][1] )
+                xy_e_traj = (e_traj[layer][0], e_traj[layer][1])
                 distance_e_traj = physTools.dist(xy_pair, xy_e_traj)
-            else: distance_e_traj = -1.0
+            else:
+                distance_e_traj = -1.0
 
             # Distance to photon trajectory
             if g_traj != None:
-                xy_g_traj = ( g_traj[layer][0], g_traj[layer][1] )
+                xy_g_traj = (g_traj[layer][0], g_traj[layer][1])
                 distance_g_traj = physTools.dist(xy_pair, xy_g_traj)
-            else: distance_g_traj = -1.0
+            else:
+                distance_g_traj = -1.0
 
             # Decide which longitudinal segment the hit is in and add to sums
             for i in range(1, physTools.nSegments + 1):
@@ -302,17 +481,20 @@ def event_process(self):
                   and (layer <= physTools.segLayers[i] - 1):
                     feats['energy_s{}'.format(i)] += hit.getEnergy()
                     feats['nHits_s{}'.format(i)] += 1
-                    feats['xMean_s{}'.format(i)] += xy_pair[0]*hit.getEnergy()
-                    feats['yMean_s{}'.format(i)] += xy_pair[1]*hit.getEnergy()
-                    feats['layerMean_s{}'.format(i)] += layer*hit.getEnergy()
+                    feats['xMean_s{}'.format(
+                        i)] += xy_pair[0] * hit.getEnergy()
+                    feats['yMean_s{}'.format(
+                        i)] += xy_pair[1] * hit.getEnergy()
+                    feats['layerMean_s{}'.format(i)] += layer * hit.getEnergy()
 
                     # Decide which containment region the hit is in and add to sums
                     for j in range(1, physTools.nRegions + 1):
 
                         if ((j - 1)*e_radii[layer] <= distance_e_traj)\
                           and (distance_e_traj < j*e_radii[layer]):
-                            feats['eContEnergy_x{}_s{}'.format(j,i)] += hit.getEnergy()
-                            feats['eContNHits_x{}_s{}'.format(j,i)] += 1
+                            feats['eContEnergy_x{}_s{}'.format(
+                                j, i)] += hit.getEnergy()
+                            feats['eContNHits_x{}_s{}'.format(j, i)] += 1
                             feats['eContXMean_x{}_s{}'.format(j,i)] +=\
                                                                 xy_pair[0]*hit.getEnergy()
                             feats['eContYMean_x{}_s{}'.format(j,i)] +=\
@@ -322,8 +504,9 @@ def event_process(self):
 
                         if ((j - 1)*g_radii[layer] <= distance_g_traj)\
                           and (distance_g_traj < j*g_radii[layer]):
-                            feats['gContEnergy_x{}_s{}'.format(j,i)] += hit.getEnergy()
-                            feats['gContNHits_x{}_s{}'.format(j,i)] += 1
+                            feats['gContEnergy_x{}_s{}'.format(
+                                j, i)] += hit.getEnergy()
+                            feats['gContNHits_x{}_s{}'.format(j, i)] += 1
                             feats['gContXMean_x{}_s{}'.format(j,i)] +=\
                                                                 xy_pair[0]*hit.getEnergy()
                             feats['gContYMean_x{}_s{}'.format(j,i)] +=\
@@ -333,8 +516,9 @@ def event_process(self):
 
                         if (distance_e_traj > j*e_radii[layer])\
                           and (distance_g_traj > j*g_radii[layer]):
-                            feats['oContEnergy_x{}_s{}'.format(j,i)] += hit.getEnergy()
-                            feats['oContNHits_x{}_s{}'.format(j,i)] += 1
+                            feats['oContEnergy_x{}_s{}'.format(
+                                j, i)] += hit.getEnergy()
+                            feats['oContNHits_x{}_s{}'.format(j, i)] += 1
                             feats['oContXMean_x{}_s{}'.format(j,i)] +=\
                                                                 xy_pair[0]*hit.getEnergy()
                             feats['oContYMean_x{}_s{}'.format(j,i)] +=\
@@ -344,7 +528,7 @@ def event_process(self):
 
             # Build MIP tracking hit list; (outside electron region or electron missing)
             if distance_e_traj >= e_radii[layer] or distance_e_traj == -1.0:
-                trackingHitList.append(hit) 
+                trackingHitList.append(hit)
 
     # If possible, quotient out the total energy from the means
     for i in range(1, physTools.nSegments + 1):
@@ -356,7 +540,7 @@ def event_process(self):
 
         for j in range(1, physTools.nRegions + 1):
 
-            if feats['eContEnergy_x{}_s{}'.format(j,i)] > 0:
+            if feats['eContEnergy_x{}_s{}'.format(j, i)] > 0:
                 feats['eContXMean_x{}_s{}'.format(j,i)] /=\
                                                     feats['eContEnergy_x{}_s{}'.format(j,i)]
                 feats['eContYMean_x{}_s{}'.format(j,i)] /=\
@@ -364,7 +548,7 @@ def event_process(self):
                 feats['eContLayerMean_x{}_s{}'.format(j,i)] /=\
                                                     feats['eContEnergy_x{}_s{}'.format(j,i)]
 
-            if feats['gContEnergy_x{}_s{}'.format(j,i)] > 0:
+            if feats['gContEnergy_x{}_s{}'.format(j, i)] > 0:
                 feats['gContXMean_x{}_s{}'.format(j,i)] /=\
                                                     feats['gContEnergy_x{}_s{}'.format(j,i)]
                 feats['gContYMean_x{}_s{}'.format(j,i)] /=\
@@ -372,7 +556,7 @@ def event_process(self):
                 feats['gContLayerMean_x{}_s{}'.format(j,i)] /=\
                                                     feats['gContEnergy_x{}_s{}'.format(j,i)]
 
-            if feats['oContEnergy_x{}_s{}'.format(j,i)] > 0:
+            if feats['oContEnergy_x{}_s{}'.format(j, i)] > 0:
                 feats['oContXMean_x{}_s{}'.format(j,i)] /=\
                                                     feats['oContEnergy_x{}_s{}'.format(j,i)]
                 feats['oContYMean_x{}_s{}'.format(j,i)] /=\
@@ -455,7 +639,7 @@ def event_process(self):
 
         for j in range(1, physTools.nSegments + 1):
 
-            if feats['eContEnergy_x{}_s{}'.format(j,i)] > 0:
+            if feats['eContEnergy_x{}_s{}'.format(j, i)] > 0:
                 feats['eContXStd_x{}_s{}'.format(j,i)] =\
                         math.sqrt(feats['eContXStd_x{}_s{}'.format(j,i)]/\
                         feats['eContEnergy_x{}_s{}'.format(j,i)])
@@ -466,7 +650,7 @@ def event_process(self):
                         math.sqrt(feats['eContLayerStd_x{}_s{}'.format(j,i)]/\
                         feats['eContEnergy_x{}_s{}'.format(j,i)])
 
-            if feats['gContEnergy_x{}_s{}'.format(j,i)] > 0:
+            if feats['gContEnergy_x{}_s{}'.format(j, i)] > 0:
                 feats['gContXStd_x{}_s{}'.format(j,i)] =\
                         math.sqrt(feats['gContXStd_x{}_s{}'.format(j,i)]/\
                         feats['gContEnergy_x{}_s{}'.format(j,i)])
@@ -477,7 +661,7 @@ def event_process(self):
                         math.sqrt(feats['gContLayerStd_x{}_s{}'.format(j,i)]/\
                         feats['gContEnergy_x{}_s{}'.format(j,i)])
 
-            if feats['oContEnergy_x{}_s{}'.format(j,i)] > 0:
+            if feats['oContEnergy_x{}_s{}'.format(j, i)] > 0:
                 feats['oContXStd_x{}_s{}'.format(j,i)] =\
                         math.sqrt(feats['oContXStd_x{}_s{}'.format(j,i)]/\
                         feats['oContEnergy_x{}_s{}'.format(j,i)])
@@ -488,17 +672,17 @@ def event_process(self):
                         math.sqrt(feats['oContLayerStd_x{}_s{}'.format(j,i)]/\
                         feats['oContEnergy_x{}_s{}'.format(j,i)])
 
-
     # Find the first layer of the ECal where a hit near the projected photon trajectory
     # AND the total number of hits around the photon trajectory
-    if g_traj != None: # If no photon trajectory, leave this at the default
+    if g_traj != None:  # If no photon trajectory, leave this at the default
 
         # First currently unusued; pending further study; performance drop from  v9 and v12
         #print(trackingHitList, g_traj)
-        feats['firstNearPhLayer'], feats['nNearPhHits'] = mipTracking.nearPhotonInfo(
-                                                            trackingHitList, g_traj )
-    else: feats['nNearPhHits'] = feats['nReadoutHits']
-
+        feats['firstNearPhLayer'], feats[
+            'nNearPhHits'] = mipTracking.nearPhotonInfo(
+                trackingHitList, g_traj)
+    else:
+        feats['nNearPhHits'] = feats['nReadoutHits']
 
     # Territories limited to trackingHitList
     if e_traj != None:
@@ -511,16 +695,15 @@ def event_process(self):
         feats['TerritoryRatio'] = 10
         feats['fullTerritoryRatio'] = 10
     if feats['electronTerritoryHits'] != 0:
-        feats['TerritoryRatio'] = feats['photonTerritoryHits']/feats['electronTerritoryHits']
+        feats['TerritoryRatio'] = feats['photonTerritoryHits'] / feats[
+            'electronTerritoryHits']
     if feats['fullElectronTerritoryHits'] != 0:
         feats['fullTerritoryRatio'] = feats['fullPhotonTerritoryHits']/\
                                             feats['fullElectronTerritoryHits']
 
-
     # Find MIP tracks
     feats['straight4'], trackingHitList = mipTracking.findStraightTracks(
-                                trackingHitList, e_traj_ends, g_traj_ends,
-                                mst = 4, returnHitList = True)
+        trackingHitList, e_traj_ends, g_traj_ends, mst=4, returnHitList=True)
 
     # Fill the tree (according to fiducial category) with values for this event
     #print(e_fid, g_fid)
@@ -531,6 +714,7 @@ def event_process(self):
         elif e_fid and not g_fid: self.tfMakers['ein'].fillEvent(feats)
         elif not e_fid and g_fid: self.tfMakers['gin'].fillEvent(feats)
         else: self.tfMakers['none'].fillEvent(feats)
+
 
 if __name__ == "__main__":
     main()
