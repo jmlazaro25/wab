@@ -152,7 +152,8 @@ def main():
 
             # Setup canvas
             c = st.MakeCanvas( "c", "", 600, 600 )
-            leg = TLegend( 0.55, 0.7, 0.95, 0.9 )
+            leg = TLegend( 0.5, 0.65, 0.95, 0.85 )
+            #leg = TLegend( 0.3, 0.6, 0.5, 0.9 )
             st.SetLegendStyle( leg )
             leg.SetTextSize( 0.04 )
 
@@ -161,12 +162,10 @@ def main():
             if ( logy ):
                 c.SetLogy()
 
-            labels = []
-
             # Draw histograms and add each entry to the legend
             for hist in hists:
                 if ( logy ):
-                    hist.GetYaxis().SetRangeUser( 1e-04, 15 * ymax )
+                    hist.GetYaxis().SetRangeUser( 1e-04, 10 * ymax )
                 else:
                     hist.GetYaxis().SetRangeUser( 0, 1.2 * ymax )
 

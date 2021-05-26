@@ -21,13 +21,14 @@ def main():
     maxEvents = pdict[ 'maxEvents' ]
 
     # Add discValue to tree model
-    branches_info[ 'discValue_EcalVeto' ] = { 'rtype': float, 'default': 0.5}
+    branches_info[ 'discValue_gabrielle' ] = { 'rtype': float, 'default': 0.5}
+
     # Construct tree processes
     procs = []
     for gl, group in zip( group_labels, inlist ):
         procs.append(
             manager.TreeProcess(
-                event_process, group, ID=gl, tree_name='EcalVeto', pfreq=100
+                event_process, group, ID=gl, tree_name='EcalVeto', pfreq=1000
                 )
             )
 
@@ -129,7 +130,7 @@ def event_process( self ):
     # Add prediction to new tree
     evtarray = np.array( [ feats ] )
     pred = float( model.predict( xgb.DMatrix( evtarray ) )[ 0 ] )
-    self.tfMaker.branches[ 'discValue_EcalVeto' ][ 0 ] = pred
+    self.tfMaker.branches[ 'discValue_gabrielle' ][ 0 ] = pred
 
     # Fill new tree with current event values
     self.tfMaker.tree.Fill()
